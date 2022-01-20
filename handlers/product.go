@@ -34,6 +34,11 @@ func (p *products) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		// g := r.FindAllStringSubmatch(r.URL.Path, -1)
 		p.l.Println("The request is ", r.Method)
 		t := r.URL.Path
+
+		if len(t) == 1 {
+			p.l.Println("Invalid ID")
+			return
+		}
 		id, _ := strconv.Atoi(string(t[1:]))
 
 		p.l.Println("The id is ", id)
