@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/emrahsariboz/microservices/handlers"
+	"github.com/gorilla/mux"
 )
 
 func main() {
@@ -18,8 +19,15 @@ func main() {
 
 	p := handlers.NewProducts(l)
 
-	sm := http.NewServeMux()
-	sm.Handle("/", p)
+	sm := mux.NewRouter()
+
+	// Get Handler
+	getRouter := sm.Methods("GET").Subrouter()
+	getRouter.HandleFunc("/", p.GetProduct)
+
+	// Put Router
+	putRouter := sm.Methods(http.MethodPut).Subrouter()
+	putRouter.HandleFunc("/{id:[0-9]+}", p.PutProduct)
 
 	s := &http.Server{
 		Addr:    ":9090",
