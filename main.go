@@ -19,6 +19,7 @@ func main() {
 	p := handlers.NewProducts(l)
 
 	sm := http.NewServeMux()
+
 	sm.Handle("/", p)
 
 	s := &http.Server{
