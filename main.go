@@ -21,18 +21,24 @@ func main() {
 
 	sm := mux.NewRouter()
 
+	// sm.Handle("/product", p).Method("GET")
+
 	// Get Handler
 	getRouter := sm.Methods("GET").Subrouter()
 	getRouter.HandleFunc("/", p.GetProduct)
 
 	// Put Router
 	putRouter := sm.Methods(http.MethodPut).Subrouter()
-	putRouter.HandleFunc("/{id:[0-9]+}", p.PutProduct)
+	putRouter.HandleFunc("/{id:[0-9]+}", p.UpdateProduct)
+
+	// Post Router
+	postRouter := sm.Methods(http.MethodPost).Subrouter()
+	postRouter.HandleFunc("/", p.AddProduct)
+	postRouter.Use(p.MiddlewareProductValidation)
 
 	s := &http.Server{
-		Addr:    ":9090",
-		Handler: sm,
-
+		Addr:         ":9090",
+		Handler:      sm,
 		IdleTimeout:  120 * time.Second,
 		ReadTimeout:  1 * time.Second,
 		WriteTimeout: 1 * time.Second,

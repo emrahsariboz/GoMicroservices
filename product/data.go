@@ -7,8 +7,8 @@ import (
 
 type Product struct {
 	ID        int     `json:"Id"`
-	Name      string  `json:"name"`
-	Price     float32 `json:"price"`
+	Name      string  `json:"Name"`
+	Price     float32 `json:"Price"`
 	CreatedOn string  `json:"-"`
 	UpdateOn  string  `json:"-"`
 	DeleteOn  string  `json:"-"`
@@ -17,7 +17,6 @@ type Product struct {
 type Products []*Product
 
 func UpdateProduct(id int, p Product) {
-
 	for i := 0; i < len(ProductList); i++ {
 		if ProductList[i].ID == id {
 			ProductList[i] = &p
@@ -32,6 +31,7 @@ func GetProducts() Products {
 
 func AddProduct(p *Product) {
 	p.ID = GetNextId()
+	fmt.Println(*p)
 	ProductList = append(ProductList, p)
 }
 

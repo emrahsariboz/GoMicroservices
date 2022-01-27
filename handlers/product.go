@@ -1,8 +1,8 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -62,37 +62,48 @@ func (p *products) GetProduct(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (p *products) addProduct(rw http.ResponseWriter, r *http.Request) {
+func (p *products) AddProduct(rw http.ResponseWriter, r *http.Request) {
 
-	np := product.NewProduct()
+	prod := r.Context().Value(KeyProduct{}).(product.Product)
 
-	err := json.NewDecoder(r.Body).Decode(np)
-
-	if err != nil {
-		fmt.Println("Something wrong")
-	}
-
-	p.l.Printf("Prod: %#v", np)
-
-	product.AddProduct(np)
+	p.l.Println("PRODCT PASSED", prod)
+	product.AddProduct(&prod)
 }
 
-func (p *products) PutProduct(w http.ResponseWriter, r *http.Request) {
+func (p *products) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 
 	id, err2 := strconv.Atoi(vars["id"])
 
 	if err2 != nil {
-		p.l.Println("Something wrong")
-	}
-	np := product.NewProduct()
-
-	err := json.NewDecoder(r.Body).Decode(np)
-
-	if err != nil {
-		fmt.Println("Something wrong")
+		log.Println(err2)
 	}
 
-	product.UpdateProduct(id, *np)
+	p.l.Println("Handle PUT request ", id)
+
+	prod := r.Context().Value(KeyProduct{}).(product.Product)
+
+	product.UpdateProduct(id, prod)
+
+}
+
+type KeyProduct struct{}
+
+func (p *products) MiddlewareProductValidation(next http.Handler) http.Handler {
+
+	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+		np := product.NewProduct()
+
+		err := json.NewDecoder(r.Body).Decode(np)
+
+		if err != nil {
+			http.Error(rw, "Cannot unmarshall the json", http.StatusBadRequest)
+		}
+
+		ctx := context.WithValue(r.Context(), KeyProduct{}, *np)
+		r = r.WithContext(ctx)
+
+		next.ServeHTTP(rw, r)
+	})
 }
