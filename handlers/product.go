@@ -90,6 +90,7 @@ func (p *products) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 
 type KeyProduct struct{}
 
+// Creates Middleware - A step before or after an http request.
 func (p *products) MiddlewareProductValidation(next http.Handler) http.Handler {
 
 	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
@@ -101,6 +102,17 @@ func (p *products) MiddlewareProductValidation(next http.Handler) http.Handler {
 			http.Error(rw, "Cannot unmarshall the json", http.StatusBadRequest)
 		}
 
+		err = np.Validate()
+
+		if err != nil {
+			p.l.Println("[ERROR] validating product")
+			http.Error(rw, "Error validating product", http.StatusBadGateway)
+			return
+		}
+		// Every http request has context object embedded in it
+		// which is used to store information during the lifetime of request. (Used for passing request scope values)
+		// A good use case is pass info between middleware and handlers.
+		// Another use case is to check the request creater is authenticated, etc.
 		ctx := context.WithValue(r.Context(), KeyProduct{}, *np)
 		r = r.WithContext(ctx)
 

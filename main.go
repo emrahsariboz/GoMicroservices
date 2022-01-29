@@ -36,6 +36,7 @@ func main() {
 	postRouter.HandleFunc("/", p.AddProduct)
 	postRouter.Use(p.MiddlewareProductValidation)
 
+	l.Println("Starting server at")
 	s := &http.Server{
 		Addr:         ":9090",
 		Handler:      sm,
