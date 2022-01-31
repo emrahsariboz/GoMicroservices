@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/emrahsariboz/microservices/handlers"
+	"github.com/go-openapi/runtime/middleware"
 	"github.com/gorilla/mux"
 )
 
@@ -31,10 +32,21 @@ func main() {
 	putRouter := sm.Methods(http.MethodPut).Subrouter()
 	putRouter.HandleFunc("/{id:[0-9]+}", p.UpdateProduct)
 
+	// Delete Router
+	delRouter := sm.Methods(http.MethodDelete).Subrouter()
+	delRouter.HandleFunc("/{id:[0-9]+}", p.DeleteProducr)
+
 	// Post Router
 	postRouter := sm.Methods(http.MethodPost).Subrouter()
 	postRouter.HandleFunc("/", p.AddProduct)
 	postRouter.Use(p.MiddlewareProductValidation)
+
+	ops := middleware.RedocOpts{SpecURL: "/swagger.yaml"}
+	sh := middleware.Redoc(ops, nil)
+
+	//docs handler
+	getRouter.Handle("/docs", sh)
+	getRouter.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
 
 	l.Println("Starting server at")
 	s := &http.Server{

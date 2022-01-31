@@ -1,3 +1,17 @@
+// Package classification of Product type
+//
+// Documentation for Product API
+//
+// Schemes: http
+// BasePath: /
+// Version: 1.0.0
+//
+// Consumes:
+// - application/json
+//
+// Produces:
+// - application/json
+// swagger:meta
 package handlers
 
 import (
@@ -11,6 +25,16 @@ import (
 	"github.com/gorilla/mux"
 )
 
+type Product struct {
+	ID        int     `json:"Id"`
+	Name      string  `json:"Name" validate:"required"`
+	Price     float32 `json:"Price" validate:"gt=0"`
+	SKU       string  `json:"sku" validate:"required,sku"`
+	CreatedOn string  `json:"-"`
+	UpdateOn  string  `json:"-"`
+	DeleteOn  string  `json:"-"`
+}
+
 type products struct {
 	l *log.Logger
 }
@@ -19,37 +43,18 @@ func NewProducts(l *log.Logger) *products {
 	return &products{l}
 }
 
-// func (p *products) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
-// 	// This will get the data as JSON format.
-// 	if r.Method == http.MethodGet {
-// 		p.getProduct(rw, r)
-// 		return
-// 	} else if r.Method == http.MethodPost {
-// 		p.addProduct(rw, r)
-// 		return
-// 	}
+//List of products returns in the response
+// swagger:response productResponse
+type productResponse struct {
+	//All products in the system
+	//in: body
+	Body []product.Product
+}
 
-// 	if r.Method == http.MethodPut {
-// 		// Expect the ID in URI.
-// 		// r := regexp.MustCompile(`/([0-9]+)`)
-// 		// g := r.FindAllStringSubmatch(r.URL.Path, -1)
-// 		p.l.Println("The request is ", r.Method)
-// 		t := r.URL.Path
-
-// 		if len(t) == 1 {
-// 			p.l.Println("Invalid ID")
-// 			return
-// 		}
-// 		id, _ := strconv.Atoi(string(t[1:]))
-
-// 		p.l.Println("The id is ", id)
-// 		p.updateProduct(id, rw, r)
-// 	}
-
-// 	// Handle UPDATE
-// 	rw.WriteHeader(http.StatusMethodNotAllowed)
-// }
-
+//swagger:route GET /products products listProducts
+//Returns a list of products
+//Responses:
+//	200: productResponse
 func (p *products) GetProduct(rw http.ResponseWriter, r *http.Request) {
 
 	lp := product.GetProducts()
@@ -68,6 +73,21 @@ func (p *products) AddProduct(rw http.ResponseWriter, r *http.Request) {
 
 	p.l.Println("PRODCT PASSED", prod)
 	product.AddProduct(&prod)
+}
+
+func (p *products) DeleteProduct(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	id, err2 := strconv.Atoi(vars["id"])
+
+	if err2 != nil {
+		log.Println(err2)
+	}
+
+	p.l.Println("Handle Delete request ", id)
+
+	p.DeleteProduct(id)
+
 }
 
 func (p *products) UpdateProduct(w http.ResponseWriter, r *http.Request) {

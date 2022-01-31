@@ -1,0 +1,46 @@
+basePath: /
+consumes:
+- application/json
+definitions:
+  Product:
+    properties:
+      Id:
+        format: int64
+        type: integer
+        x-go-name: ID
+      Name:
+        type: string
+      Price:
+        format: float
+        type: number
+      sku:
+        type: string
+        x-go-name: SKU
+    type: object
+    x-go-package: github.com/emrahsariboz/microservices/product
+info:
+  description: Documentation for Product API
+  title: of Product type
+  version: 1.0.0
+paths:
+  /products:
+    get:
+      description: Returns a list of products
+      operationId: listProducts
+      responses:
+        "200":
+          $ref: '#/responses/productResponse'
+      tags:
+      - products
+produces:
+- application/json
+responses:
+  productResponse:
+    description: List of products returns in the response
+    schema:
+      items:
+        $ref: '#/definitions/Product'
+      type: array
+schemes:
+- http
+swagger: "2.0"

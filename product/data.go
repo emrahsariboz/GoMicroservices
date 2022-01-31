@@ -54,6 +54,11 @@ func UpdateProduct(id int, p Product) {
 	}
 }
 
+// ToDo: complete delete request.
+func DeleteProduct(id int) {
+
+}
+
 func GetProducts() Products {
 	fmt.Println(ProductList)
 	return ProductList
