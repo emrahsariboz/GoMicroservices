@@ -3,9 +3,12 @@ consumes:
 - application/json
 definitions:
   Product:
+    description: Product defines the structure for an API product
     properties:
       Id:
+        description: the id for user
         format: int64
+        minimum: 1
         type: integer
         x-go-name: ID
       Name:
@@ -16,6 +19,8 @@ definitions:
       sku:
         type: string
         x-go-name: SKU
+    required:
+    - Id
     type: object
     x-go-package: github.com/emrahsariboz/microservices/product
 info:
@@ -32,9 +37,28 @@ paths:
           $ref: '#/responses/productResponse'
       tags:
       - products
+  /products/{id}:
+    delete:
+      description: Deletes a product with given id from database
+      operationId: deleteProduct
+      parameters:
+      - description: The id of the product to delete from
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+        x-go-name: ID
+      responses:
+        "200":
+          $ref: '#/responses/nocontent'
+      tags:
+      - products
 produces:
 - application/json
 responses:
+  noContent:
+    description: ""
   productResponse:
     description: List of products returns in the response
     schema:
