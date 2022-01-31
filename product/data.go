@@ -18,6 +18,8 @@ type Product struct {
 	DeleteOn  string  `json:"-"`
 }
 
+var ErrProductNotFound = fmt.Errorf("Product not found")
+
 type Products []*Product
 
 func validateSKU(fl validator.FieldLevel) bool {
@@ -55,8 +57,15 @@ func UpdateProduct(id int, p Product) {
 }
 
 // ToDo: complete delete request.
-func DeleteProduct(id int) {
+func DeleteProduct(id int) error {
+	p := FindProduct(id)
 
+	if p < 0 {
+		return ErrProductNotFound
+	}
+
+	ProductList = append(ProductList[:p], ProductList[p+1:]...)
+	return nil
 }
 
 func GetProducts() Products {
@@ -77,6 +86,16 @@ func GetNextId() int {
 
 func NewProduct() *Product {
 	return &Product{}
+}
+
+func FindProduct(index int) int {
+	for i, p := range ProductList {
+		if p.ID == index {
+			return i
+		}
+	}
+
+	return -1
 }
 
 var ProductList = []*Product{

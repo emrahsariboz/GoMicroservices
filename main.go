@@ -34,7 +34,7 @@ func main() {
 
 	// Delete Router
 	delRouter := sm.Methods(http.MethodDelete).Subrouter()
-	delRouter.HandleFunc("/{id:[0-9]+}", p.DeleteProducr)
+	delRouter.HandleFunc("/{id:[0-9]+}", p.DeleteProduct)
 
 	// Post Router
 	postRouter := sm.Methods(http.MethodPost).Subrouter()

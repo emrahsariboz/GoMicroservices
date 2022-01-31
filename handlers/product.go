@@ -77,6 +77,7 @@ func (p *products) AddProduct(rw http.ResponseWriter, r *http.Request) {
 
 func (p *products) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 
+	p.l.Println("Delete request is called ")
 	vars := mux.Vars(r)
 	id, err2 := strconv.Atoi(vars["id"])
 
@@ -86,7 +87,11 @@ func (p *products) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 
 	p.l.Println("Handle Delete request ", id)
 
-	p.DeleteProduct(id)
+	productErr := product.DeleteProduct(id)
+
+	if productErr != nil {
+		p.l.Println("[ERROR] deleting record", productErr)
+	}
 
 }
 
