@@ -1,17 +1,3 @@
-// Package classification of Product type
-//
-// Documentation for Product API
-//
-// Schemes: http
-// BasePath: /
-// Version: 1.0.0
-//
-// Consumes:
-// - application/json
-//
-// Produces:
-// - application/json
-// swagger:meta
 package handlers
 
 import (
@@ -43,26 +29,6 @@ func NewProducts(l *log.Logger) *products {
 	return &products{l}
 }
 
-//List of products returns in the response
-// swagger:response productResponse
-type productResponse struct {
-	//All products in the system
-	//in: body
-	Body []product.Product
-}
-
-// swagger:response noContent
-type productNoContent struct {
-}
-
-//swagger:parameters deleteProduct
-type ProductIdParameter struct {
-	// The id of the product to delete from
-	// in: path
-	// required: true
-	ID int `json:"id"`
-}
-
 //swagger:route GET /products products listProducts
 //Returns a list of products
 //Responses:
@@ -82,7 +48,7 @@ func (p *products) GetProduct(rw http.ResponseWriter, r *http.Request) {
 //swagger:route DELETE /products/{id} products deleteProduct
 //Deletes a product with given id from database
 //responses:
-//200: nocontent
+//200: noContent
 
 //DeleteProduct deletes a product from the database
 func (p *products) DeleteProduct(w http.ResponseWriter, r *http.Request) {

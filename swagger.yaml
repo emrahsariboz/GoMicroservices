@@ -51,7 +51,7 @@ paths:
         x-go-name: ID
       responses:
         "200":
-          $ref: '#/responses/nocontent'
+          $ref: '#/responses/noContent'
       tags:
       - products
 produces:
